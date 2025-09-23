@@ -161,7 +161,6 @@ def instructions_tab():
        - The dataset defines the model prompt and example schema for extraction.
     3. **Configure the Dataset** (Optional):
        - Edit the model prompt or example schema if needed.
-       - Click 'Save' to update the configuration in PostgreSQL.
     4. **Choose Processing Model**:
        - Select from Model-1 (PDF to JSON), Model-2 (OCR + Bytes), or Model-3 (Custom Processing).
     5. **Upload Files**:
@@ -178,7 +177,7 @@ def instructions_tab():
        - Data is fetched from both local PostgreSQL (Model-1/2) and Model-3 API, and displayed in a table.
     3. **Interact with Data**:
        - Select a file from the dropdown on the left to view its metadata, OCR output, extracted JSON, and download full reports (JSON or PDF) on the right.
-       - Filter by source (Local or Model-3) if needed.
+       - Filter by source (Model-1 & 2 or Model-3) if needed.
 
     #### 3. JSON Accuracy Analysis
     1. **Navigate to the "📊 JSON Accuracy" tab**.
@@ -193,7 +192,6 @@ def instructions_tab():
     1. **Navigate to the "🧠 Process Files" tab**.
     2. **Add New Dataset**:
        - Enter a dataset name, model prompt, and example schema.
-       - Click 'Add New Dataset' to save to PostgreSQL (requires backend support).
 
     ### Backend Processes
     1. **File Upload**:
@@ -209,6 +207,9 @@ def instructions_tab():
 
     ### Additional Information
     Source code: [GitHub Repo](#) Available Soon.
+    FE Streamlit URL: https://nldindiacaptureplatform.streamlit.app/ 
+
+    By: NLD India Software Pvt. Ltd.
     """)
 
 def process_files_tab():
