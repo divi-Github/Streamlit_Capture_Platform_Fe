@@ -260,7 +260,8 @@ def process_files_tab():
 
         endpoint = f"/{api_choice[0]}"
         # Use different base URL for Model-3 (when api_choice[0] == "upload")
-        base_url = MODEL3_API_BASE_URL if api_choice[0] == "upload" else "http://localhost:8000"
+        # base_url = MODEL3_API_BASE_URL if api_choice[0] == "upload" else "http://localhost:8000"
+        base_url = MODEL3_API_BASE_URL if api_choice[0] == "upload" else "https://tuboid-nonparochially-christian.ngrok-free.dev"
         url = base_url + endpoint
 
         headers = {
