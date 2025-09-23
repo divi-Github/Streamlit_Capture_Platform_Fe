@@ -219,7 +219,9 @@ def process_files_tab():
         options=[
             ("process/pdf2json", "Model-1 PDF to JSON - Pytesseract(OCR) + Gemini LLM [API Used: process/pdf2json]"),
             ("process/OCR+bytes", "Model-2 OCR + Bytes - Images in Bytes to LLM [API Used: process/OCR+bytes]"),
-            ("upload", "Model-3 Custom Processing [API Used: upload]")
+            ("upload", "Model-3 Visdeal & Apicem Invoice Extraction (Pytesseract + Gemini LLM)")
+
+            # ("upload", "Model-3 Custom Processing [API Used: upload]")
         ],
         format_func=lambda x: x[1]
     )
