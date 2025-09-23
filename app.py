@@ -15,7 +15,7 @@ st.set_page_config(page_title="JSON Data Extraction Model", layout="wide")
 
 # API base URL for FastAPI backend
 # API_BASE_URL = "http://localhost:8000/data"  
-API_BASE_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev"  
+API_BASE_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev/data"  
 MODEL3_API_BASE_URL = "https://7b544424febc.ngrok-free.app/" 
 
 # --- API Functions ---
