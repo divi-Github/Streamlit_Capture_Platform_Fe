@@ -11,7 +11,8 @@ from io import BytesIO
 
 
 # Streamlit page configuration
-st.set_page_config(page_title="JSON Data Extraction Model", layout="wide")
+st.set_page_config(page_title="JSON Data Extraction Model", layout="wide", 
+                   page_icon="🎈" )
 
 # API base URL for FastAPI backend
 API_BASE_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev/data"  
