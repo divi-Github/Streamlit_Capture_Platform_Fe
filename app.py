@@ -802,12 +802,26 @@ def process_files_tab():
                 response.raise_for_status()
                 result = response.json()
                 st.success(f"File '{uploaded_file.name}' processed successfully!")
+                # st.json(result)
+                
+# ********************************************************8
 
-                st.write("🔍 Raw API Response:")
-                st.write(result)
+                gpt_json = result.get("data", {}).get("extracted_data", {}).get("gpt_extraction_output")
 
-        
-                st.json(result)
+                if gpt_json:
+                    st.markdown("### 📄 Extracted GPT JSON")
+                    st.code(json.dumps(gpt_json, indent=2), language="json")
+                
+                    # Download button
+                    st.download_button(
+                        label="📥 Download Extracted JSON",
+                        data=json.dumps(gpt_json, indent=2),
+                        file_name=f"{uploaded_file.name.replace('.pdf', '')}_extracted.json",
+                        mime="application/json"
+                    )
+                else:
+                    st.warning("⚠️ Extracted GPT JSON not found in the response.")
+# ********************************************************8
             except requests.exceptions.RequestException as e:
                 st.error(f"API request failed: {e}")
 
