@@ -537,7 +537,7 @@ from io import BytesIO
 
 
 # Streamlit page configuration
-st.set_page_config(page_title="Capture Platform - NLD India", layout="wide", 
+st.set_page_config(page_title="Capture Platform", layout="wide", 
                    page_icon="📝" )
 
 # API base URL for FastAPI backend
