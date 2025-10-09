@@ -543,8 +543,8 @@ st.set_page_config(page_title="JSON Data Extraction Model", layout="wide",
 # API base URL for FastAPI backend
 API_BASE_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev/data"  
 # API_BASE_URL = "http://localhost:8003/data"  
-# MODEL3_API_BASE_URL = "https://unstandardisable-shantelle-gnawable.ngrok-free.dev" 
-MODEL3_API_BASE_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev" 
+MODEL3_API_BASE_URL = "https://unstandardisable-shantelle-gnawable.ngrok-free.dev" 
+# MODEL3_API_BASE_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev" 
 
 # --- API Functions ---
 def fetch_documents(model_type="local"):
@@ -788,8 +788,8 @@ def process_files_tab():
         endpoint = f"/{api_choice[0]}"
         # Use different base URL for Model-3 (when api_choice[0] == "upload")
         # base_url = MODEL3_API_BASE_URL if api_choice[0] == "upload" else "http://localhost:8000"
-        # base_url = MODEL3_API_BASE_URL if api_choice[0] == "upload" else "https://tuboid-nonparochially-christian.ngrok-free.dev"
         base_url = MODEL3_API_BASE_URL if api_choice[0] == "upload" else "https://tuboid-nonparochially-christian.ngrok-free.dev"
+        # base_url = MODEL3_API_BASE_URL if api_choice[0] == "upload" else "https://tuboid-nonparochially-christian.ngrok-free.dev"
         url = base_url + endpoint
 
         headers = {
