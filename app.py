@@ -802,6 +802,11 @@ def process_files_tab():
                 response.raise_for_status()
                 result = response.json()
                 st.success(f"File '{uploaded_file.name}' processed successfully!")
+
+                st.write("🔍 Raw API Response:")
+                st.write(result)
+
+        
                 st.json(result)
             except requests.exceptions.RequestException as e:
                 st.error(f"API request failed: {e}")
