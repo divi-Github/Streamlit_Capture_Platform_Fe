@@ -822,6 +822,10 @@ def process_files_tab():
                 else:
                     st.warning("⚠️ Extracted GPT JSON not found in the response.")
 # ********************************************************8
+
+                st.markdown("### 📄 Processed Document : Summary")
+                st.json(result)
+
             except requests.exceptions.RequestException as e:
                 st.error(f"API request failed: {e}")
 
