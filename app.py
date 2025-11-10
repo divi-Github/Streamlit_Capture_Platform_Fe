@@ -13,8 +13,10 @@ import time
 
 st.set_page_config(page_title="Capture Platform", layout="wide", page_icon="📝")
 
-API_BASE_URL = "http://127.0.0.1:5800/api"
-DATA_API_URL = "http://127.0.0.1:5800/data/"
+# API_BASE_URL = "http://127.0.0.1:5800/api"
+API_BASE_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev/api"
+# DATA_API_URL = "http://127.0.0.1:5800/data/"
+DATA_API_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev/data/"
 
 def fetch_documents():
     url = DATA_API_URL
