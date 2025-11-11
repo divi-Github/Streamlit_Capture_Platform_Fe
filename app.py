@@ -18,6 +18,9 @@ API_BASE_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev/api"
 # DATA_API_URL = "http://127.0.0.1:5800/data/"
 DATA_API_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev/data/"
 
+# Global Customer Names for Dropdown
+CUSTOMER_NAMES = ['allseas', 'visdeal', 'berencourt', 'smeetferrybol', 'corybrothers', 'smeetferryead', 'smeetferryfln']
+
 def fetch_documents():
     url = DATA_API_URL
     headers = {}
@@ -30,14 +33,14 @@ def fetch_documents():
             st.warning("No documents found in the database.")
         
         for doc in data:
-            doc['source'] = 'Capture Platform - Unified Model' 
+            doc['source'] = 'Capture Platform - Unified Model'  
             
         return data
     except requests.exceptions.RequestException as e:
-        st.error(f"Failed to fetch documents from {API_BASE_URL}: {str(e)}")
+        st.error(f"Failed to fetch documents from {DATA_API_URL}: {str(e)}")
         return []
 
-#  JSON Comparison
+# JSON Comparison functions
 def flatten_json(y, prefix=''):
     out = {}
     def flatten(x, name=''):
@@ -73,7 +76,7 @@ def compare_json(json1, json2):
         "mismatch_data": mismatch_data
     }
 
-#  Report Generation (pdf)  
+# Report Generation (pdf)  
 def generate_pdf_report(doc):
     buffer = BytesIO()
     pdf = SimpleDocTemplate(buffer, pagesize=A4)
@@ -121,7 +124,6 @@ def generate_pdf_report(doc):
     buffer.seek(0)
     return buffer
 
-# Tab Definitions 
 def instructions_tab():
     st.markdown("""
     ## How to Use the (Capture Platform - Unified Model)
@@ -133,14 +135,15 @@ def instructions_tab():
 
     #### 1. Uploading Files
     1. **Navigate to the "🧠 Process Files" tab**.
-    2. **Enter Customer Name**:
+    2. **Enter/Select Customer Name**:
+        - Use the radio button to choose between manual entry or selection from the dropdown.
         - This name determines which **extraction schema** the backend will use (e.g., `test` loads `schemas/test.json`).
     3. **Upload Files**:
         - Use the file uploader to select files (PDF, images, etc.).
         - Click **'Submit'** to send the file and the customer name to the backend API (`e.g., api/capturePlatform`).
         - The backend handles the processing, saving, and returns the extracted JSON.
-    4. **Schema Management**:
-        - The schema and model prompt are now managed **entirely on the backend** in the `schemas/` folder, based on the `customer_name` we added.
+    4. **Output Persistence**:
+        - Extracted JSON is now saved and displayed using `st.session_state` and will **not disappear** on a page refresh or interaction with other tabs.
 
     #### 2. Exploring Data
     1. **Navigate to the "🔎 Explore Data" tab**.
@@ -173,25 +176,49 @@ def instructions_tab():
 
 def process_files_tab():
     st.header("🧠 Process Files - Capture Platform (Unified Model)")
-    processing_endpoint = "/process/OcrBytes" 
-
-    customer_name = st.text_input(
-        "Enter/Select Customer Name", 
-        value="", 
-        help="This name is used by the backend to load the corresponding extraction schema from 'schemas/{customer_name}.json'."
+    processing_endpoint = "/process/OcrBytes"
+    
+    customer_input_method = st.radio(
+        "**Choose Customer Name Input Method**",
+        ("Select from Dropdown", "Enter Customer Name"),
+        key="customer_input_method",
+        horizontal=True,
+        help="Select whether to choose the customer name from a predefined list or manually enter it."
     )
+
+    customer_name = ""
+    if customer_input_method == "Enter Customer Name":
+        customer_name = st.text_input(
+            "Enter Customer Name",
+            value="",
+            key="manual_customer_name",
+            help="This name is used by the backend to load the corresponding extraction schema from 'schemas/{customer_name}.json'."
+        )
+    else:
+        customer_name = st.selectbox(
+            "Select Customer Name",
+            options=CUSTOMER_NAMES,
+            key="dropdown_customer_name",
+            help="Choose a customer name from the predefined list: " + ", ".join(CUSTOMER_NAMES)
+        )
+
+    st.info(f"The Model Prompt and Example Schema are now loaded by the backend based on the **Customer Name** you enter/select: **{customer_name}**")
     
-    st.info("The Model Prompt and Example Schema are now loaded by the backend based on the **Customer Name** you enter/select.")
-    
+    # Initialize session state for result storage
+    if 'processing_result' not in st.session_state:
+        st.session_state.processing_result = None
+
     uploaded_file = st.file_uploader("Upload a file (PDF or Image)", type=["pdf", "png", "jpg", "jpeg"])
 
     if st.button("Submit"):
         if not customer_name.strip():
             st.error("🚨 Please enter/select a Customer Name.")
+            st.session_state.processing_result = None 
             return
 
         if uploaded_file is None:
             st.error("🚨 Please upload a file to process.")
+            st.session_state.processing_result = None 
             return
 
         files = {"file": (uploaded_file.name, uploaded_file.getvalue())}
@@ -205,37 +232,49 @@ def process_files_tab():
             "accept": "application/json"
         }
 
+        st.session_state.processing_result = None 
+
         with st.spinner(f"Processing file for '{customer_name}'...", show_time=True):
-            time.sleep(5)
+            time.sleep(5) 
             try:
                 response = requests.post(url, files=files, data=data, headers=headers)
                 response.raise_for_status()
                 result = response.json()
+                
+                st.session_state.processing_result = result
+
                 st.success(f"File '{uploaded_file.name}' processed successfully for customer '{customer_name}'!")
-
-                gpt_json = result.get("data", {}).get("extracted_data", {}).get("gpt_extraction_output")
-
-                if gpt_json:
-                    st.markdown("### 📄 Extracted JSON")
-                    st.code(json.dumps(gpt_json, indent=2), language="json")
-                    
-                    # Download button
-                    st.download_button(
-                        label="📥 Download Extracted JSON",
-                        data=json.dumps(gpt_json, indent=2),
-                        file_name=f"{uploaded_file.name.replace('.pdf', '')}_{customer_name}_extracted.json",
-                        mime="application/json"
-                    )
-                else:
-                    st.warning("⚠️ Extracted JSON output not found in the response.")
-
-                st.markdown("### 📄 Processed Document : Summary")
-                st.json(result)
+                
+                st.rerun() 
 
             except requests.exceptions.RequestException as e:
                 st.error(f"API request failed: {e}")
+                st.session_state.processing_result = None 
             except Exception as e:
                 st.error(f"An unexpected error occurred: {e}")
+                st.session_state.processing_result = None 
+
+    if st.session_state.processing_result:
+        result = st.session_state.processing_result
+        gpt_json = result.get("data", {}).get("extracted_data", {}).get("gpt_extraction_output")
+
+        st.markdown("<hr>", unsafe_allow_html=True)
+        
+        if gpt_json:
+            st.markdown("### 📄 Extracted JSON")
+            st.code(json.dumps(gpt_json, indent=2), language="json")
+            
+            st.download_button(
+                label="📥 Download Extracted JSON",
+                data=json.dumps(gpt_json, indent=2),
+                file_name=f"{uploaded_file.name.replace('.pdf', '')}_{customer_name}_extracted.json" if uploaded_file else f"extracted_{customer_name}.json",
+                mime="application/json"
+            )
+        else:
+            st.warning("⚠️ Extracted JSON output not found in the response.")
+
+        st.markdown("### 📄 Processed Document : Summary")
+        st.json(result)
 
 def explore_data_tab():
     st.header("🔎 Explore Data")
@@ -274,7 +313,7 @@ def explore_data_tab():
         selected_doc_id = st.selectbox(
             "Choose a Document",
             options=filtered_df['id'].tolist(),
-            format_func=lambda x: f"{x} ({filtered_df[filtered_df['id'] == x]['source'].iloc[0] if not filtered_df.empty else 'unknown'})",
+            format_func=lambda x: f"{x} ({filtered_df[filtered_df['id'] == x]['source'].iloc[0] if not filtered_df.empty and x in filtered_df['id'].tolist() else 'unknown'})",
             key="explore_select"
         )
 
@@ -296,7 +335,7 @@ def explore_data_tab():
                 ])
             st.table(metadata)
 
-            # Display OCR output 
+            # Display OCR output  
             if 'data' in doc and isinstance(doc['data'], dict) and 'extracted_data' in doc['data'] and 'ocr_output' in doc['data']['extracted_data']:
                 with st.expander("View OCR Output", expanded=False):
                     st.code(doc['data']['extracted_data']['ocr_output'], language="text")
@@ -318,7 +357,7 @@ def explore_data_tab():
             else:
                 st.warning("No extracted JSON data available.")
 
-            # Download  full analysis report (JSON)
+            # Download full analysis report (JSON)
             if 'data' in doc and isinstance(doc['data'], dict):
                 analysis_report = {
                     "id": doc['id'],
@@ -370,7 +409,7 @@ def json_accuracy_tab():
     st.subheader("Compare JSON Outputs")
     col1, col2 = st.columns(2)
 
-    # First JSON 
+    # First JSON  
     with col1:
         st.write("**Select First (1st) JSON**")
         doc1_source = st.radio("Source for First JSON", ["Database Output", "Upload Ground Truth"], key="doc1_source")
@@ -379,7 +418,7 @@ def json_accuracy_tab():
             doc1_id = st.selectbox(
                 "Select First Document",
                 options=df['id'].tolist(),
-                format_func=lambda x: f"{x} ({df[df['id'] == x]['source'].iloc[0] if not df[df['id'] == x].empty else 'unknown'})",
+                format_func=lambda x: f"{x} ({df[df['id'] == x]['source'].iloc[0] if not df[df['id'] == x].empty and x in df['id'].tolist() else 'unknown'})",
                 key="doc1"
             )
             doc1 = df[df['id'] == doc1_id].iloc[0] if doc1_id is not None else None
@@ -396,7 +435,7 @@ def json_accuracy_tab():
                     st.error("Invalid JSON file.")
                     json1 = None
                 
-    #  Second JSON 
+    # Second JSON  
     with col2:
         st.write("**Select Second (2nd) JSON**")
         doc2_source = st.radio("Source for Second JSON", ["Database Output", "Upload Ground Truth"], key="doc2_source")
@@ -405,7 +444,7 @@ def json_accuracy_tab():
             doc2_id = st.selectbox(
                 "Select Second Document",
                 options=df['id'].tolist(),
-                format_func=lambda x: f"{x} ({df[df['id'] == x]['source'].iloc[0] if not df[df['id'] == x].empty else 'unknown'})",
+                format_func=lambda x: f"{x} ({df[df['id'] == x]['source'].iloc[0] if not df[df['id'] == x].empty and x in df['id'].tolist() else 'unknown'})",
                 key="doc2"
             )
             doc2 = df[df['id'] == doc2_id].iloc[0] if doc2_id is not None else None
@@ -455,7 +494,7 @@ def json_accuracy_tab():
 
 
 def main():
-    st.header("Capture Platform - Data Extraction (JSON) & O/P Comparison for PDFs/Images")
+    st.title("Capture Platform - Data Extraction (JSON) & O/P Comparison for PDFs/Images")
     tabs = st.tabs(["🧠 Process Files", "🔎 Explore Data", "📊 JSON Accuracy", "🖥️ Instructions"])
     
     with tabs[0]:
