@@ -14,7 +14,7 @@ import time
 st.set_page_config(page_title="Capture Platform", layout="wide", page_icon="📝")
 
 # API_BASE_URL = "http://127.0.0.1:5800/api"
-API_BASE_URL = "https://www.clockchamp.com/api/OcrBytes"
+API_BASE_URL = "https://www.clockchamp.com/api"
 # DATA_API_URL = "http://127.0.0.1:5800/data/"
 DATA_API_URL = "https://www.clockchamp.com/api/data/"
 
@@ -176,7 +176,7 @@ def instructions_tab():
 
 def process_files_tab():
     st.header("🧠 Process Files - Capture Platform (Unified Model)")
-    processing_endpoint = "/process/OcrBytes"
+    processing_endpoint = "/OcrBytes"
     
     customer_input_method = st.radio(
         "**Choose Customer Name Input Method**",
