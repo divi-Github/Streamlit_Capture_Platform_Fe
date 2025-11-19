@@ -14,12 +14,12 @@ import time
 st.set_page_config(page_title="Capture Platform", layout="wide", page_icon="📝")
 
 # API_BASE_URL = "http://127.0.0.1:5800/api"
-API_BASE_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev/api"
+API_BASE_URL = "https://www.clockchamp.com/api/OCRBytes"
 # DATA_API_URL = "http://127.0.0.1:5800/data/"
-DATA_API_URL = "https://tuboid-nonparochially-christian.ngrok-free.dev/data/"
+DATA_API_URL = "https://www.clockchamp.com/api/data/"
 
 # Global Customer Names for Dropdown
-CUSTOMER_NAMES = ['allseas', 'visdeal', 'berencourt', 'smeetferrybol', 'corybrothers', 'smeetferryead', 'smeetferryfln']
+CUSTOMER_NAMES = ['allseas', 'visdeal', 'berencourt', 'smeetferrybol', 'corybrothers', 'smeetferryead', 'smeetferryfln', 'Generic']
 
 def fetch_documents():
     url = DATA_API_URL
