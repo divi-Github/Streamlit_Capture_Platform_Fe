@@ -16,7 +16,7 @@ st.set_page_config(page_title="Capture Platform", layout="wide", page_icon="📝
 # API_BASE_URL = "http://127.0.0.1:5800/api"
 API_BASE_URL = "https://www.clockchamp.com/api"
 # DATA_API_URL = "http://127.0.0.1:5800/data/"
-DATA_API_URL = "https://www.clockchamp.com/api/data"
+DATA_API_URL = "https://www.clockchamp.com/api/data/"
 
 # Global Customer Names for Dropdown
 CUSTOMER_NAMES = ['allseas', 'visdeal', 'berencourt', 'smeetferrybol', 'corybrothers', 'smeetferryead', 'smeetferryfln', 'Generic']
